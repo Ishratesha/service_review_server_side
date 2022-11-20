@@ -60,6 +60,30 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
     const result = await reviewcollection.deleteOne(query);
     res.send(result);
 })
+app.get ('/reviews/:id',async(req,res)=>{
+  const id = req.params.id;
+  const query = { _id: ObjectId(id) };
+  const review = await reviewcollection.findOne(query);
+  res.send(review);
+})
+app.put('/reviews/:id', async(req,res)=>{
+  const id =req.params.id;
+  const review =req.body;
+  const query ={_id:ObjectId(id)}
+  
+  const option = {upsert: true};
+  const updateDoc={
+    $set:{
+      serviceName:review.serviceName,
+      email: review.email,
+      date:review.date,
+      textarea:review.textarea
+    }
+ 
+  }
+  const result = await reviewcollection.updateOne(query,updateDoc);
+  res.send(result)
+})
     app.get('/threeservice',async(req,res)=>{
         const query ={}
         const coursor = database.find(query)
